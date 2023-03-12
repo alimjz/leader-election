@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: leader-election
+  cloud:
+    consul:
+      host: 172.18.63.37
+      port: 8500
+#      config:
+#        enabled: true
+#        name: leader-election
+#        format: yaml
+#        data-key: leader-election
+#        watch:
+#          enabled: true
+#          wait-time: 10
+#          delay: 1000
+#        fail-fast: false
+#        prefixes: config
+#        acl-token: d336b585-eead-08bb-102e-1d8205bc300d
+      discovery:
+        acl-token: d336b585-eead-08bb-102e-1d8205bc300d
+        heartbeat:
+          enabled: true
+          ttl: 10s
+        instance-id: ${spring.application.name}:${random.int}
+
+server:
+  port: 0
+
+cluster:
+  leader:
+    serviceName: lead-electing
+    serviceId: ${spring.cloud.consul.discovery.instance-id}
+    consul:
+      host: 172.18.63.37
+      port: 8500
+      discovery:
+        enabled: false
+    session:
+      ttl: 30
+      refresh: 25
+    election:
+      envelopeTemplate: services/%s/leader
